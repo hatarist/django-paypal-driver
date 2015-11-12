@@ -65,8 +65,20 @@ class PayPal(object):
         self,
         username=None,
         password=None,
-        signature=None
+        signature=None,
+        email=None
     ):
+
+        credentials = getattr(settings, "PAYPAL_DRIVER_CREDENTIALS", {})
+
+        if email is not None:
+            if email not in credentials:
+                raise Exception('django-paypal-driver: No settings for email '
+                                '<{0}> are provided.'.format(email))
+
+            username = credentials[email]['USER']
+            password = credentials[email]['PASSWORD']
+            signature = credentials[email]['SIGNATURE']
 
         self.credientials = {
             "USER": username or getattr(settings, "PAYPAL_USER", None),
