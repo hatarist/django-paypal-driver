@@ -10,9 +10,9 @@ from django.conf import settings
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-from paypal.driver import PayPal
-from paypal.models import PayPalResponse
-from paypal.utils import process_payment_request, process_refund_request
+from paypal_driver.driver import PayPal
+from paypal_driver.models import PayPalResponse
+from paypal_driver.utils import process_payment_request, process_refund_request
 
 def setcheckout(request, return_url, cancel_url, error_url, template = "paypal/setcheckout.html", currency = "USD"):
     """
@@ -20,7 +20,7 @@ def setcheckout(request, return_url, cancel_url, error_url, template = "paypal/s
     If response 'Success' or 'SuccessWithWarning' comes, redirects user to the PayPal website to continue checkout process.
     If response 'Failed' or 'FailedWithWarning' comes, shows the error and redirects user to the 'payment page' to choose another POS or PayPal again.
     """
-    
+
     #############################################################################
     # ROUTINES                                                                  #
     # 1) Perform and validate POST data                                         #
@@ -51,11 +51,11 @@ def setcheckout(request, return_url, cancel_url, error_url, template = "paypal/s
             if request.user.is_authenticated():
                 request.user.message_set.create(message = _(driver.setexpresscheckouterror))
             return HttpResponseRedirect(error_url)
-        
+
         # send him/her to the PayPal website to check his/her order details out
         redirect_url = driver.paypal_url()
         return HttpResponseRedirect(redirect_url)
-    
+
     return render_to_response(template,
                               {'currency': currency,
                                'return_url': return_url,
@@ -97,7 +97,7 @@ def docheckout(request, error_url, success_url, template = "paypal/docheckout.ht
         # Now we are gone, redirect user to success page
         if request.user.is_authenticated():
             request.user.message_set.create(message = _("Amount %s has been successfully charged, your transaction id is '%s'" % (amount, response.trans_id)))
-        
+
         return HttpResponseRedirect(success_url)
 
     return render_to_response(template,
@@ -119,9 +119,9 @@ def dorefund(request, error_url, success_url, template = "paypal/dorefund.html")
             if request.user.is_authenticated():
                 request.user.message_set.create(message = _("No given valid amount. Please check the amount that will be charged."))
             return HttpResponseRedirect(error_url)
-        
+
         response_obj = get_object_or_404(PayPalResponse, trans_id = trans_id)
-        
+
         # charge from PayPal
         result, response = process_refund_request(response_obj, amount)
         # process the result
@@ -130,11 +130,11 @@ def dorefund(request, error_url, success_url, template = "paypal/dorefund.html")
             if request.user.is_authenticated():
                 request.user.message_set.create(message = _("Amount %s has not been charged, server error is '%s'" % (amount, response.error)))
             return HttpResponseRedirect(error_url)
-        
+
         # Now we are gone, redirect user to success page
         if request.user.is_authenticated():
             request.user.message_set.create(message = _("Amount %s has been successfully refunded, your transaction id is '%s'" % (amount, response.trans_id)))
-        
+
         return HttpResponseRedirect(success_url)
 
     return render_to_response(template,

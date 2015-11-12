@@ -12,7 +12,7 @@ setup(
     author='Ozgur Vatansever',
     author_email='ozgurvt@gmail.com',
     url='http://code.google.com/p/django-paypal-driver/',
-    packages=['paypal'],
+    packages=['paypal_driver'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',

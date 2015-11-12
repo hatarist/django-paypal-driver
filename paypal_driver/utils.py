@@ -3,8 +3,8 @@
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext as _
-from paypal.driver import PayPal
-from paypal.models import PayPalResponse, PayPalResponseStatus
+from paypal_driver.driver import PayPal
+from paypal_driver.models import PayPalResponse, PayPalResponseStatus
 
 def process_payment_request(amount, currency, token, payerid):
     """
@@ -13,7 +13,7 @@ def process_payment_request(amount, currency, token, payerid):
     #################
     # BEGIN ROUTINE #
     #################
-    
+
     # call PayPal driver and perform the relevant PayPal API method to charge the money
     driver = PayPal()
     result = driver.DoExpressCheckoutPayment(currency = currency, amount = str(amount), token = token, payerid = payerid)
@@ -46,16 +46,16 @@ def process_refund_request(response, amount):
     #################
     # BEGIN ROUTINE #
     #################
-    
+
     # call PayPal driver and perform the relevant PayPal API method to refund the money
     driver = PayPal()
     result = driver.RefundTransaction(response.trans_id, refundtype = "Partial", amount = str(amount), currency = response.currencycode)
-    
+
     # persist the response to the db with PayPalResponse instance
     paypal_response = PayPalResponse()
     paypal_response.fill_from_response(driver.GetRefundResponse(), action = "Refund")
     paypal_response.status = PayPalResponse.get_cancel_status()
-    
+
     if result == True:
         # Amount refunded successfully.
         paypal_response.payment_received = True
