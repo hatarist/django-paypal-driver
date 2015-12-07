@@ -6,7 +6,7 @@ from decimal import Decimal
 from django.utils.translation import ugettext as _
 
 class PayPalResponseStatus(models.Model):
-    summary = models.CharField(max_length = 32)
+    summary = models.CharField(max_length=32)
 
     class Meta:
         verbose_name = _("PayPal Response Status")
@@ -17,17 +17,17 @@ class PayPalResponseStatus(models.Model):
 
 
 class PayPalResponse(models.Model):
-    token = models.CharField(max_length = 256, null = True, blank = True, db_index = True)
-    trans_id = models.CharField(max_length = 256, null = True, blank = True, db_index = True)
-    correlation_id = models.CharField(max_length = 256, null = True, blank = True)
-    response = models.CharField(max_length = 32)
-    error_msg = models.CharField(max_length = 256, null = True, blank = True)
-    error = models.CharField(max_length = 512, null = True, blank = True)
-    currencycode = models.CharField(max_length = 32, null = True, blank = True)
+    token = models.CharField(max_length=256, null=True, blank=True, db_index=True)
+    trans_id = models.CharField(max_length=256, null=True, blank=True, db_index=True)
+    correlation_id = models.CharField(max_length=256, null=True, blank=True)
+    response = models.CharField(max_length=32)
+    error_msg = models.CharField(max_length=256, null=True, blank=True)
+    error = models.CharField(max_length=512, null=True, blank=True)
+    currencycode = models.CharField(max_length=32, null=True, blank=True)
     raw_response = models.TextField()
-    charged = models.DecimalField(decimal_places = 2, max_digits = 7, null = True, blank = True)
+    charged = models.DecimalField(decimal_places=2, max_digits=7, null=True, blank=True)
     status = models.ForeignKey(PayPalResponseStatus)
-    payment_received = models.BooleanField(default = False)
+    payment_received = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = _("PayPal Response")
@@ -38,26 +38,25 @@ class PayPalResponse(models.Model):
 
     @staticmethod
     def get_default_status():
-        ps, created = PayPalResponseStatus.objects.get_or_create(summary = _("Sale"))
+        ps, created = PayPalResponseStatus.objects.get_or_create(summary=_("Sale"))
         return ps
 
     @staticmethod
     def get_authorization_status():
-        ps, created = PayPalResponseStatus.objects.get_or_create(summary = _("Authorization"))
+        ps, created = PayPalResponseStatus.objects.get_or_create(summary=_("Authorization"))
         return ps
 
     @staticmethod
     def get_capture_status():
-        ps, created = PayPalResponseStatus.objects.get_or_create(summary = _("Capture"))
+        ps, created = PayPalResponseStatus.objects.get_or_create(summary=_("Capture"))
         return ps
 
     @staticmethod
     def get_cancel_status():
-        ps, created = PayPalResponseStatus.objects.get_or_create(summary = _("Refund"))
+        ps, created = PayPalResponseStatus.objects.get_or_create(summary=_("Refund"))
         return ps
 
-
-    def fill_from_response(self, response, action = "Sale"):
+    def fill_from_response(self, response, action="Sale"):
         """
         For payment:
 

@@ -80,7 +80,7 @@ class PayPal(object):
             password = credentials[email]['PASSWORD']
             signature = credentials[email]['SIGNATURE']
 
-        self.credientials = {
+        self.credentials = {
             "USER": username or getattr(settings, "PAYPAL_USER", None),
             "PWD": password or getattr(settings, "PAYPAL_PASSWORD", None),
             "SIGNATURE": signature or getattr(
@@ -104,7 +104,7 @@ class PayPal(object):
             )
 
         # initialization
-        self.signature = urllib.urlencode(self.credientials) + '&'
+        self.signature = urllib.urlencode(self.credentials) + '&'
         self.setexpresscheckouterror = None
         self.getexpresscheckoutdetailserror = None
         self.doexpresscheckoutpaymenterror = None
@@ -233,7 +233,7 @@ class PayPal(object):
         response_dict = parse_qs(response)
         self.api_response = response_dict
         state = self._get_value_from_qs(response_dict, "ACK")
-        if not state in ["Success", "SuccessWithWarning"]:
+        if state not in ["Success", "SuccessWithWarning"]:
             self.getexpresscheckoutdetailserror = self._get_value_from_qs(
                 response_dict, "L_SHORTMESSAGE0"
             )
@@ -296,7 +296,7 @@ class PayPal(object):
         state = self._get_value_from_qs(response_tokens, "ACK")
         self.response = response_tokens
         self.api_response = response_tokens
-        if not state in ["Success", "SuccessWithWarning"]:
+        if state not in ["Success", "SuccessWithWarning"]:
             self.doexpresscheckoutpaymenterror = GENERIC_PAYMENT_ERROR
             self.apierror = self._get_value_from_qs(
                 response_tokens, "L_LONGMESSAGE0"
@@ -338,7 +338,7 @@ class PayPal(object):
         self.response = response_tokens
         self.api_response = response_tokens
 
-        if not state in ["Success", "SuccessWithWarning"]:
+        if state not in ["Success", "SuccessWithWarning"]:
             self.doexpresscheckoutpaymenterror = GENERIC_PAYMENT_ERROR
             self.apierror = self._get_value_from_qs(
                 response_tokens, "L_LONGMESSAGE0"
@@ -369,7 +369,7 @@ class PayPal(object):
         self.response = response_tokens
         self.api_response = response_tokens
 
-        if not state in ["Success", "SuccessWithWarning"]:
+        if state not in ["Success", "SuccessWithWarning"]:
             self.doexpresscheckoutpaymenterror = GENERIC_PAYMENT_ERROR
             self.apierror = self._get_value_from_qs(
                 response_tokens, "L_LONGMESSAGE0"
@@ -408,7 +408,7 @@ class PayPal(object):
          'CORRELATIONID': '6c95d7f979fc1'}
         """
 
-        if not refundtype in ["Full", "Partial"]:
+        if refundtype not in ["Full", "Partial"]:
             self.refundtransactionerror = (
                 "Wrong parameters given, We can not perform your refund "
                 "request"
@@ -441,7 +441,7 @@ class PayPal(object):
         state = self._get_value_from_qs(response_tokens, "ACK")
         self.refund_response = response_tokens
         self.api_response = response_tokens
-        if not state in ["Success", "SuccessWithWarning"]:
+        if state not in ["Success", "SuccessWithWarning"]:
             self.refundtransactionerror = GENERIC_REFUND_ERROR
             return False
         return True
