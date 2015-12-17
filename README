@@ -19,7 +19,7 @@ Example
 
 Once you copy the "paypal" drectory under your PYTHON_PATH; you can enter shell by typing "python manage.py shell" command under your project root. 
 
-You need to define your PayPal API Credientials in your projects settings file. Those are;
+You need to define your PayPal API Credentials in your projects settings file. Those are;
     - PAYPAL_USER (api username)
     - PAYPAL_PASSWORD (api password)
     - PAYPAL_SIGNATURE (api signature)

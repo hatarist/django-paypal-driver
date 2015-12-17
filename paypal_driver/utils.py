@@ -5,12 +5,12 @@ from paypal_driver.driver import PayPal
 from paypal_driver.models import PayPalResponse
 
 
-def process_payment_request(amount, currency, token, payerid):
+def process_payment_request(amount, currency, token, payerid, email=None):
     """
     utility function to perform PayPal payment
     """
     # call PayPal driver and perform the relevant PayPal API method to charge the money
-    driver = PayPal()
+    driver = PayPal(email=email)
     result = driver.DoExpressCheckoutPayment(
         currency=currency,
         amount=str(amount),
